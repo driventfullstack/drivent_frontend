@@ -3,9 +3,6 @@ import useEnrollment from '../../hooks/api/useEnrollment';
 import useTickets from '../../hooks/api/useTickets';
 export function PaymentComponent() {
   const { enrollment } = useEnrollment();
-  const { data } = useTickets();
-
-  if (!data) return <></>;
 
   return (
     <Container>
@@ -16,12 +13,14 @@ export function PaymentComponent() {
           <TicketsContainer>
             <h2>Primeiro, escolha sua modalidade de ingresso</h2>
             <TicketsAvailable>
-              {data.map((a) => (
-                <div>
-                  <h1>{a.name}</h1>
-                  <p>R$ {a.price}</p>
-                </div>
-              ))}
+              <div>
+                <h1>Presencial</h1>
+                <p>R$200</p>
+              </div>
+              <div>
+                <h1>Online</h1>
+                <p>R$100</p>
+              </div>
             </TicketsAvailable>
           </TicketsContainer>
         ) : (
@@ -69,6 +68,7 @@ const TicketsAvailable = styled.div`
     background-color: white;
     border-radius: 20px;
     height: 145px;
+    width: 145px;
     border: 1px solid #cecece;
     text-align: center;
     display: flex;
