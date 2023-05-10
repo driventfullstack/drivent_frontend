@@ -60,7 +60,7 @@ function ProtectedRouteGuard({ children }) {
   const token = useToken();
 
   if (!token) {
-    return <Navigate to="/sign-in" />;
+    return <Navigate to="/dashboard" />;
   }
 
   return <>
