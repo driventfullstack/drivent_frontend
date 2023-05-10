@@ -1,3 +1,4 @@
+import { PaymentComponent } from '../../../components/payment';
 export default function Payment() {
-  return 'Pagamento: Em breve!';
+  return <PaymentComponent />;
 }
