@@ -10,6 +10,7 @@ export function PaymentComponent() {
   const { enrollment } = useEnrollment();
   const token = useToken();
   const [ticketType, setTicketType] = useState('');
+  const [hotel, setHotel] = useState('');
   const navigate = useNavigate();
 
   async function chooseOption() {
@@ -76,6 +77,44 @@ export function PaymentComponent() {
       ) : (
         ''
       )}
+
+      {ticketType === 'Presencial' ? (
+        <ConfimationHeadline>
+          <h2>Ótimo! Agora escolha sua modalidade de hospedagem</h2>
+
+          <TicketsAvailable>
+            <div
+              style={{ backgroundColor: hotel === 'Presencial' ? '#FFEED2' : '' }}
+              onClick={() => setHotel('Presencial')}
+            >
+              <h1>Sem hotel</h1>
+              <p>+R$0</p>
+            </div>
+            <div style={{ backgroundColor: hotel === 'Online' ? '#FFEED2' : '' }} onClick={() => setHotel('Online')}>
+              <h1>com Hotel</h1>
+              <p>+ R$350</p>
+            </div>
+          </TicketsAvailable>
+
+          {hotel !== '' ? (
+            <>
+              <h2>Fechado! O total ficou em {hotel !== 'Presencial' ? 'R$650' : 'R$250'}. Agora é só confirmar:</h2>
+              <button
+                onClick={async () => {
+                  await chooseOption();
+                  navigate('/enroll');
+                }}
+              >
+                RESERVAR INGRESSO
+              </button>
+            </>
+          ) : (
+            ''
+          )}
+        </ConfimationHeadline>
+      ) : (
+        ''
+      )}
     </Container>
   );
 }
@@ -134,6 +173,9 @@ const ConfimationHeadline = styled.div`
   margin-top: 20px;
 
   color: #8e8e8e;
+  h2 {
+    margin-top: 10px;
+  }
 
   button {
     margin-top: 17px;
@@ -143,5 +185,9 @@ const ConfimationHeadline = styled.div`
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
     border-radius: 4px;
     border: none;
+    :hover {
+      background-color: green;
+      cursor: pointer;
+    }
   }
 `;
