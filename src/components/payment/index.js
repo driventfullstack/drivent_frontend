@@ -1,8 +1,37 @@
 import styled from 'styled-components';
 import useEnrollment from '../../hooks/api/useEnrollment';
-import useTickets from '../../hooks/api/useTickets';
+import api from '../../services/api';
+import useToken from '../../hooks/useToken';
+import { useState } from 'react';
+import axios from 'axios';
 export function PaymentComponent() {
   const { enrollment } = useEnrollment();
+  const token = useToken();
+  const [ticketType, setTicketType] = useState('');
+
+  async function chooseOption() {
+    try {
+      const response = await axios.post('http://localhost:4000/tickets/types', { ticketType: ticketType }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function handlePresencialOptionClick() {
+    setTicketType('presencial');
+    await chooseOption();
+  }
+
+  async function handleOnlineOptionClick() {
+    setTicketType('online');
+    await chooseOption();
+  }
 
   return (
     <Container>
@@ -13,11 +42,11 @@ export function PaymentComponent() {
           <TicketsContainer>
             <h2>Primeiro, escolha sua modalidade de ingresso</h2>
             <TicketsAvailable>
-              <div>
+              <div onClick={handlePresencialOptionClick} >
                 <h1>Presencial</h1>
-                <p>R$200</p>
+                <p>R$250</p>
               </div>
-              <div>
+              <div onClick={handleOnlineOptionClick}>
                 <h1>Online</h1>
                 <p>R$100</p>
               </div>
@@ -61,6 +90,7 @@ const TicketsAvailable = styled.div`
     font-size: 16px;
   }
   p {
+    margin-top:3px;
     font-size: 14px;
     color: #898989;
   }
