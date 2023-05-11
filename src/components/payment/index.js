@@ -1,36 +1,32 @@
+/* eslint-disable space-before-function-paren */
 import styled from 'styled-components';
 import useEnrollment from '../../hooks/api/useEnrollment';
-import api from '../../services/api';
 import useToken from '../../hooks/useToken';
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 export function PaymentComponent() {
   const { enrollment } = useEnrollment();
   const token = useToken();
   const [ticketType, setTicketType] = useState('');
+  const navigate = useNavigate();
 
   async function chooseOption() {
     try {
-      const response = await axios.post('http://localhost:4000/tickets/types', { ticketType: ticketType }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(response.data);
+      const response = await axios.post(
+        'http://localhost:4000/tickets/types',
+        { ticketType: ticketType },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
-  }
-
-  async function handlePresencialOptionClick() {
-    setTicketType('presencial');
-    await chooseOption();
-  }
-
-  async function handleOnlineOptionClick() {
-    setTicketType('online');
-    await chooseOption();
   }
 
   return (
@@ -42,11 +38,17 @@ export function PaymentComponent() {
           <TicketsContainer>
             <h2>Primeiro, escolha sua modalidade de ingresso</h2>
             <TicketsAvailable>
-              <div onClick={handlePresencialOptionClick} >
+              <div
+                style={{ backgroundColor: ticketType === 'Presencial' ? '#FFEED2' : '' }}
+                onClick={() => setTicketType('Presencial')}
+              >
                 <h1>Presencial</h1>
                 <p>R$250</p>
               </div>
-              <div onClick={handleOnlineOptionClick}>
+              <div
+                style={{ backgroundColor: ticketType === 'Online' ? '#FFEED2' : '' }}
+                onClick={() => setTicketType('Online')}
+              >
                 <h1>Online</h1>
                 <p>R$100</p>
               </div>
@@ -56,6 +58,24 @@ export function PaymentComponent() {
           <NoEnrollment>Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso</NoEnrollment>
         )}
       </div>
+
+      {ticketType === 'Online' ? (
+        <ConfimationHeadline>
+          <h2>
+            Fechado! O total ficou em <strong>R$ 100</strong>. Agora é só confirmar:
+          </h2>
+          <button
+            onClick={async () => {
+              await chooseOption();
+              navigate('/enroll');
+            }}
+          >
+            RESERVAR INGRESSO
+          </button>
+        </ConfimationHeadline>
+      ) : (
+        ''
+      )}
     </Container>
   );
 }
@@ -90,7 +110,7 @@ const TicketsAvailable = styled.div`
     font-size: 16px;
   }
   p {
-    margin-top:3px;
+    margin-top: 3px;
     font-size: 14px;
     color: #898989;
   }
@@ -106,5 +126,22 @@ const TicketsAvailable = styled.div`
     justify-content: center;
     padding: 5px;
     box-sizing: border-box;
+  }
+`;
+
+const ConfimationHeadline = styled.div`
+  font-size: 20px;
+  margin-top: 20px;
+
+  color: #8e8e8e;
+
+  button {
+    margin-top: 17px;
+    width: 162px;
+    height: 37px;
+    background: #e0e0e0;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    border: none;
   }
 `;
