@@ -17,7 +17,7 @@ export function PaymentComponent() {
     try {
       const response = await axios.post(
         'http://localhost:4000/tickets/types',
-        { ticketType: ticketType },
+        { ticketType: ticketType, hotel: hotel  },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -84,13 +84,13 @@ export function PaymentComponent() {
 
           <TicketsAvailable>
             <div
-              style={{ backgroundColor: hotel === 'Presencial' ? '#FFEED2' : '' }}
-              onClick={() => setHotel('Presencial')}
+              style={{ backgroundColor: hotel === 'PresencialsemHotel' ? '#FFEED2' : '' }}
+              onClick={() => setHotel('PresencialsemHotel')}
             >
               <h1>Sem hotel</h1>
               <p>+R$0</p>
             </div>
-            <div style={{ backgroundColor: hotel === 'Online' ? '#FFEED2' : '' }} onClick={() => setHotel('Online')}>
+            <div style={{ backgroundColor: hotel === 'PresencialcomHotel' ? '#FFEED2' : '' }} onClick={() => setHotel('PresencialcomHotel')}>
               <h1>com Hotel</h1>
               <p>+ R$350</p>
             </div>
@@ -98,7 +98,7 @@ export function PaymentComponent() {
 
           {hotel !== '' ? (
             <>
-              <h2>Fechado! O total ficou em {hotel !== 'Presencial' ? 'R$650' : 'R$250'}. Agora é só confirmar:</h2>
+              <h2>Fechado! O total ficou em {hotel !== 'PresencialsemHotel' ? 'R$650' : 'R$250'}. Agora é só confirmar:</h2>
               <button
                 onClick={async () => {
                   await chooseOption();
