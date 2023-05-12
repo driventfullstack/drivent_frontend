@@ -24,7 +24,18 @@ export function PaymentComponent() {
           },
         }
       );
-      return response.data;
+
+      const result = await axios.post(
+        'http://localhost:4000/tickets',
+        { ticketTypeId: response.data.id  },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return result.data;
     } catch (error) {
       throw error;
     }
