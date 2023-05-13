@@ -111,6 +111,8 @@ const Ingresso = styled.section`
 const CardInfo = styled.section`
   display: flex;
   align-items: center;
+  background-color: lightgrey;
+  border-radius: 6px;
   width: 706px;
   div {
     margin-top: 0px;
