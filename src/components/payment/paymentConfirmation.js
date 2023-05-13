@@ -1,6 +1,15 @@
 import styled from 'styled-components';
+import Cards from 'react-credit-cards';
+import React from 'react';
+import 'react-credit-cards/es/styles-compiled.css';
 
 export function ConfirmPayment({ data }) {
+  const [number, setNumber] = React.useState('');
+  const [name, setName] = React.useState('');
+  const [expiry, setExpiry] = React.useState('');
+  const [cvc, setCvc] = React.useState('');
+  const [focus, setFocus] = React.useState('');
+
   return (
     <ConfirmationScreen>
       <h1>Ingresso e Pagamento</h1>
@@ -15,7 +24,43 @@ export function ConfirmPayment({ data }) {
         </Ingresso>
 
         <h3>Pagamento</h3>
-        <CardInfo></CardInfo>
+        <CardInfo>
+          <Cards cvc={cvc} expiry={expiry} focused={focus} name={name} number={number} />
+          <Forma>
+            <input
+              type="tel"
+              name="number"
+              placeholder="Card Number"
+              value={number}
+              onChange={(e) => setNumber(e.target.value)}
+              onFocus={(e) => setFocus(e.target.name)}
+            />
+            <input
+              type="text"
+              name="Name"
+              value={name}
+              placeholder="YOUR NAME"
+              onChange={(e) => setName(e.target.value)}
+              onFocus={(e) => setFocus(e.target.name)}
+            />
+            <input
+              type="text"
+              name="Expiry"
+              value={expiry}
+              placeholder="MM/YY Expiry"
+              onChange={(e) => setExpiry(e.target.value)}
+              onFocus={(e) => setFocus(e.target.name)}
+            />
+            <input
+              type="tel"
+              name="cvc"
+              value={cvc}
+              placeholder="CVC"
+              onChange={(e) => setCvc(e.target.value)}
+              onFocus={(e) => setFocus(e.target.name)}
+            />
+          </Forma>
+        </CardInfo>
 
         <button>Finalizar Pagamento</button>
       </div>
@@ -64,7 +109,24 @@ const Ingresso = styled.section`
 `;
 
 const CardInfo = styled.section`
+  display: flex;
+  align-items: center;
   width: 706px;
-  height: 225px;
-  background-color: gold;
+  div {
+    margin-top: 0px;
+  }
+`;
+
+const Forma = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+  padding: 15px;
+  input {
+    border: none;
+    border-radius: 5px;
+    height: 45px;
+    width: 350px;
+  }
 `;
