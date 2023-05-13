@@ -4,14 +4,12 @@ import useEnrollment from '../../hooks/api/useEnrollment';
 import useToken from '../../hooks/useToken';
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 export function PaymentComponent() {
   const { enrollment } = useEnrollment();
   const token = useToken();
   const [ticketType, setTicketType] = useState('');
   const [hotel, setHotel] = useState('');
-  const navigate = useNavigate();
 
   async function chooseOption() {
     try {
@@ -79,7 +77,8 @@ export function PaymentComponent() {
           <button
             onClick={async () => {
               await chooseOption();
-              navigate('/enroll');
+              setTicketType('');
+              window.location.reload();
             }}
           >
             RESERVAR INGRESSO
@@ -118,7 +117,8 @@ export function PaymentComponent() {
               <button
                 onClick={async () => {
                   await chooseOption();
-                  navigate('/enroll');
+                  setTicketType('');
+                  window.location.reload();
                 }}
               >
                 RESERVAR INGRESSO
