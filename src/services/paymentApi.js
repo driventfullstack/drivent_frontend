@@ -1,5 +1,4 @@
 import api from './api';
-import { getTickets } from './ticketApi';
 
 export async function createPayment(token, body) {
   const response = await api.post('/payments/process', body, {
@@ -11,9 +10,8 @@ export async function createPayment(token, body) {
   return response.data;
 }
 
-export async function getPayment(token) {
-  const ticket = await getTickets(token);
-  const response = await api.get(`/payments?ticketId=${ticket.id}`, {
+export async function getPayment(token, ticketId) {
+  const response = await api.get(`/payments?ticketId=${ticketId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
