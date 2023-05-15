@@ -10,3 +10,15 @@ export default function useTickets() {
 
   return response;
 }
+
+export function useTicket() {
+  const token = useToken();
+  const { data: ticket, loading: ticketLoading, error: ticketError } = useAsync(() => ticketApi.getTickets(token));
+
+  return {
+    ticket,
+    ticketLoading,
+    ticketError,
+  };
+}
+
