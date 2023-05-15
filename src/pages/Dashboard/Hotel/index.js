@@ -35,6 +35,12 @@ export default function Hotel() {
         />
       ) : (
         <>
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+          colocar os hoteis aqui
+=======
+>>>>>>> Stashed changes
           <EscolhaHotel>Primeiro, escolha seu hotel</EscolhaHotel>
           <HotelDiv>
             {hotels.length === 0 ? '' : hotels.map((resp) => {
@@ -45,10 +51,18 @@ export default function Hotel() {
                   <HotelInfos>Tipos de acomodação:</HotelInfos>
                   <HotelInfos2>Single e Double</HotelInfos2>
                   <HotelInfos>Vagas Disponíveis:</HotelInfos>
+<<<<<<< Updated upstream
                   <HotelInfos2>100</HotelInfos2>
                 </StyledHotel>);
             })}
           </HotelDiv>
+=======
+                  <HotelInfos2>{resp.room.length}</HotelInfos2>
+                </StyledHotel>);
+            })}
+          </HotelDiv>
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
         </>
       )}
     </>
