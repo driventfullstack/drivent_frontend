@@ -2,6 +2,9 @@ import styled from 'styled-components';
 import Cards from 'react-credit-cards';
 import React from 'react';
 import 'react-credit-cards/es/styles-compiled.css';
+import { toast } from 'react-toastify';
+import useToken from '../../hooks/useToken';
+import { createPayment } from '../../services/paymentApi';
 
 export function ConfirmPayment({ data }) {
   const [number, setNumber] = React.useState('');
@@ -9,6 +12,33 @@ export function ConfirmPayment({ data }) {
   const [expiry, setExpiry] = React.useState('');
   const [cvc, setCvc] = React.useState('');
   const [focus, setFocus] = React.useState('');
+  const [issuer, setIssuer] = React.useState('');
+
+  const token = useToken();
+
+  const getIssuer = ({ issuer }) => {setIssuer(issuer);}; 
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    const body = {
+      ticketId: data.id,
+      cardData: {
+        cvc: cvc,
+        expiry: expiry,
+        issuer: issuer,
+        name: name,
+        number: number,
+      }
+    };
+
+    try {
+      const paymentData = await createPayment(token, body);
+      toast('Pagamento processado com sucesso!');
+    } catch (error) {
+      toast('Não foi possível processar o pagamento');
+    }
+  }
 
   return (
     <ConfirmationScreen>
@@ -25,7 +55,7 @@ export function ConfirmPayment({ data }) {
 
         <h3>Pagamento</h3>
         <CardInfo>
-          <Cards cvc={cvc} expiry={expiry} focused={focus} name={name} number={number} />
+          <Cards cvc={cvc} expiry={expiry} focused={focus} name={name} number={number} callback={getIssuer}/>
           <Forma>
             <input
               type="tel"
@@ -62,7 +92,7 @@ export function ConfirmPayment({ data }) {
           </Forma>
         </CardInfo>
 
-        <button>Finalizar Pagamento</button>
+        <button onClick={handleSubmit}>Finalizar Pagamento</button>
       </div>
     </ConfirmationScreen>
   );
@@ -109,6 +139,7 @@ const Ingresso = styled.section`
 `;
 
 const CardInfo = styled.section`
+  margin-top: 10px;
   display: flex;
   align-items: center;
   background-color: lightgrey;
