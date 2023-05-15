@@ -27,10 +27,13 @@ export function ConfirmPayment({ data }) {
       },
     });
     response.then((res) => setPayment(res.data));
+    // eslint-disable-next-line no-console
     response.catch((err) => console.log(err));
   }, []);
 
-  const getIssuer = ({ issuer }) => {setIssuer(issuer);}; 
+  const getIssuer = ({ issuer }) => {
+    setIssuer(issuer);
+  };
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -43,7 +46,7 @@ export function ConfirmPayment({ data }) {
         issuer: issuer,
         name: name,
         number: number,
-      }
+      },
     };
 
     try {
@@ -73,7 +76,7 @@ export function ConfirmPayment({ data }) {
         {payment === false ? (
           <>
             <CardInfo>
-              <Cards cvc={cvc} expiry={expiry} focused={focus} name={name} number={number} callback={getIssuer}/>
+              <Cards cvc={cvc} expiry={expiry} focused={focus} name={name} number={number} callback={getIssuer} />
               <Forma>
                 <input
                   type="tel"
@@ -122,7 +125,9 @@ export function ConfirmPayment({ data }) {
 
             <button onClick={(e) => handleSubmit(e)}>Finalizar Pagamento</button>
           </>
-        ) : ( <PaymentSuccess />) }
+        ) : (
+          <PaymentSuccess />
+        )}
       </div>
     </ConfirmationScreen>
   );

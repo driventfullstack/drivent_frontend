@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import styled from 'styled-components';
 import { ValidationCard } from '../../../components/ValidationCard';
 import { useTicket } from '../../../hooks/api/useTickets';
@@ -6,11 +7,13 @@ import { useEffect } from 'react';
 import useToken from '../../../hooks/useToken';
 import axios from 'axios';
 import React from 'react';
+import { useState } from 'react';
 
 export default function Hotel() {
   const { ticket } = useTicket();
   const token = useToken();
-  const [hotels, setHotels] = React.useState({});
+  const [hotels, setHotels] = useState([]);
+  const [hotelSelected, setHotelSelected] = useState(false);
 
   useEffect(() => {
     const response = axios.get('http://localhost:4000/hotels', {
@@ -19,6 +22,7 @@ export default function Hotel() {
       },
     });
     response.then((res) => {
+      // eslint-disable-next-line no-console
       console.log(res.data);
       setHotels(res.data);
     });
@@ -35,34 +39,37 @@ export default function Hotel() {
         />
       ) : (
         <>
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-          colocar os hoteis aqui
-=======
->>>>>>> Stashed changes
           <EscolhaHotel>Primeiro, escolha seu hotel</EscolhaHotel>
           <HotelDiv>
-            {hotels.length === 0 ? '' : hotels.map((resp) => {
-              return (
-                <StyledHotel>
-                  <HotelImg src={resp.image}></HotelImg>
-                  <HotelName>{resp.name}</HotelName>
-                  <HotelInfos>Tipos de acomodação:</HotelInfos>
-                  <HotelInfos2>Single e Double</HotelInfos2>
-                  <HotelInfos>Vagas Disponíveis:</HotelInfos>
-<<<<<<< Updated upstream
-                  <HotelInfos2>100</HotelInfos2>
-                </StyledHotel>);
-            })}
+            {hotels.length !== 0
+              ? hotels.map((resp) => {
+                  return (
+                    <StyledHotel onClick={() => setHotelSelected(true)}>
+                      <HotelImg src={resp.image}></HotelImg>
+                      <HotelName>{resp.name}</HotelName>
+                      <HotelInfos>Tipos de acomodação:</HotelInfos>
+                      <HotelInfos2>Single e Double</HotelInfos2>
+                      <HotelInfos>Vagas Disponíveis:</HotelInfos>
+                      <HotelInfos2></HotelInfos2>
+                    </StyledHotel>
+                  );
+                })
+              : ''}
+
+            {hotelSelected ? (
+              <>
+                <h1>Ótima pedida! Agora escolha seu quarto:</h1>
+
+                <div>
+                  {hotels.map((a) => (
+                    <p>{a.name}</p>
+                  ))}
+                </div>
+              </>
+            ) : (
+              ''
+            )}
           </HotelDiv>
-=======
-                  <HotelInfos2>{resp.room.length}</HotelInfos2>
-                </StyledHotel>);
-            })}
-          </HotelDiv>
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         </>
       )}
     </>
@@ -77,14 +84,14 @@ const HotelDiv = styled.div`
   display: flex;
   height: 270px;
   width: 700px;
-  flex-direction: row;
+  flex-direction: column;
   padding-top: 20px;
 `;
 
 const StyledHotel = styled.div`
   height: 264px;
   width: 196px;
-  background-color: #EBEBEB;
+  background-color: #ebebeb;
   border-radius: 10px;
   margin-right: 18px;
   padding-top: 16px;
@@ -97,7 +104,7 @@ const HotelImg = styled.img`
   height: 109px;
   width: 168px;
   border-radius: 5px;
-  background-color: #E5E5E5;
+  background-color: #e5e5e5;
 `;
 
 const HotelName = styled.p`
@@ -120,7 +127,7 @@ const HotelInfos2 = styled.p`
   font-family: Roboto;
   font-size: 12px;
   font-weight: regular;
-  color: #3C3C3C;
+  color: #3c3c3c;
   margin-bottom: 14px;
   margin-top: 2px;
 `;
@@ -129,5 +136,5 @@ const EscolhaHotel = styled.p`
   font-family: Roboto;
   font-size: 20px;
   font-weight: regular;
-  color: #8E8E8E;
+  color: #8e8e8e;
 `;
