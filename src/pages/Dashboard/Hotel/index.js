@@ -8,12 +8,14 @@ import useToken from '../../../hooks/useToken';
 import axios from 'axios';
 import React from 'react';
 import { useState } from 'react';
+import HotelandRoomSuccess from '../../../components/hotel/hotelConfirmation';
 
 export default function Hotel() {
   const { ticket } = useTicket();
   const token = useToken();
   const [hotels, setHotels] = useState([]);
   const [hotelSelected, setHotelSelected] = useState(false);
+  const [reservation, setReservation] = useState(false);
 
   useEffect(() => {
     const response = axios.get('http://localhost:4000/hotels', {
@@ -31,15 +33,16 @@ export default function Hotel() {
   return (
     <>
       <StyledTypography variant="h4">Escolha de quarto e hotel</StyledTypography>
+      
       {ticket?.status !== 'PAID' ? (
         <ValidationCard text={'Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem'} />
       ) : !ticket.TicketType?.includesHotel ? (
         <ValidationCard
           text={'Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades'}
         />
-      ) : (
+      ) : ( reservation !== true? (
         <>
-          <EscolhaHotel>Primeiro, escolha seu hotel</EscolhaHotel>
+          <EscolhaHotel onClick={() => setReservation(true)}>Primeiro, escolha seu hotel</EscolhaHotel>
           <HotelDiv>
             {hotels.length !== 0
               ? hotels.map((resp) => {
@@ -69,8 +72,11 @@ export default function Hotel() {
             ) : (
               ''
             )}
+
           </HotelDiv>
-        </>
+        </> ) : (
+          <HotelandRoomSuccess/>
+        )
       )}
     </>
   );
