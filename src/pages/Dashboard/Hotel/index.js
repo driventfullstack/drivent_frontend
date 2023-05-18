@@ -14,7 +14,7 @@ export default function Hotel() {
   const { ticket } = useTicket();
   const token = useToken();
   const [hotels, setHotels] = useState([]);
-  const [hotelSelected, setHotelSelected] = useState(false);
+  const [hotelSelected, setHotelSelected] = useState({});
   const [reservation, setReservation] = useState(false);
 
   useEffect(() => {
@@ -30,53 +30,67 @@ export default function Hotel() {
     });
   }, []);
 
+  function DisplayRooms(room) {
+    return (
+      <button disabled={room.capacity === room.Booking.length}>
+        <p>{room.name}</p>
+        <p>
+          {Array.from({ length: room.capacity }, (_, index) => {
+            const temReserva = index < room.Booking.length;
+
+            if (temReserva) return <ion-icon name="person"> </ion-icon>;
+
+            return <ion-icon name="person-outline"> </ion-icon>;
+          })}
+        </p>
+      </button>
+    );
+  }
+
   return (
     <>
       <StyledTypography variant="h4">Escolha de quarto e hotel</StyledTypography>
-      
+
       {ticket?.status !== 'PAID' ? (
         <ValidationCard text={'Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem'} />
       ) : !ticket.TicketType?.includesHotel ? (
         <ValidationCard
           text={'Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades'}
         />
-      ) : ( reservation !== true? (
+      ) : reservation !== true ? (
         <>
           <EscolhaHotel onClick={() => setReservation(true)}>Primeiro, escolha seu hotel</EscolhaHotel>
           <HotelDiv>
-            {hotels.length !== 0
-              ? hotels.map((resp) => {
-                  return (
-                    <StyledHotel onClick={() => setHotelSelected(true)}>
-                      <HotelImg src={resp.image}></HotelImg>
-                      <HotelName>{resp.name}</HotelName>
-                      <HotelInfos>Tipos de acomodação:</HotelInfos>
-                      <HotelInfos2>Single e Double</HotelInfos2>
-                      <HotelInfos>Vagas Disponíveis:</HotelInfos>
-                      <HotelInfos2></HotelInfos2>
-                    </StyledHotel>
-                  );
-                })
-              : ''}
+            <Hotels>
+              {hotels.length !== 0
+                ? hotels.map((resp) => {
+                    return (
+                      <StyledHotel onClick={() => setHotelSelected(resp)}>
+                        <HotelImg src={resp.image}></HotelImg>
+                        <HotelName>{resp.name}</HotelName>
+                        <HotelInfos>Tipos de acomodação:</HotelInfos>
+                        <HotelInfos2>Single e Double</HotelInfos2>
+                        <HotelInfos>Vagas Disponíveis:</HotelInfos>
+                        <HotelInfos2></HotelInfos2>
+                      </StyledHotel>
+                    );
+                  })
+                : ''}
+            </Hotels>
 
-            {hotelSelected ? (
-              <>
+            {hotelSelected.name !== undefined ? (
+              <Rooms>
                 <h1>Ótima pedida! Agora escolha seu quarto:</h1>
 
-                <div>
-                  {hotels.map((a) => (
-                    <p>{a.name}</p>
-                  ))}
-                </div>
-              </>
+                <div>{hotelSelected.Rooms.map((a) => DisplayRooms(a))}</div>
+              </Rooms>
             ) : (
               ''
             )}
-
           </HotelDiv>
-        </> ) : (
-          <HotelandRoomSuccess/>
-        )
+        </>
+      ) : (
+        <HotelandRoomSuccess />
       )}
     </>
   );
@@ -92,6 +106,32 @@ const HotelDiv = styled.div`
   width: 700px;
   flex-direction: column;
   padding-top: 20px;
+`;
+
+const Hotels = styled.div`
+  display: flex;
+`;
+
+const Rooms = styled.div`
+  margin-top: 10px;
+
+  div {
+    display: flex;
+    margin-top: 5px;
+    width: 807px;
+    flex-wrap: wrap;
+    gap: 10px;
+    button {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-radius: 6px;
+      width: 190px;
+      height: 45px;
+      border: solid 3px #cecece;
+    }
+  }
 `;
 
 const StyledHotel = styled.div`
