@@ -1,15 +1,43 @@
 import styled from 'styled-components';
+import useToken from '../../hooks/useToken';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 export default function HotelandRoomSuccess() {
+  const [reservation, setReservation] = useState(null);
+  const token = useToken();
+
+  useEffect(() => {
+    const response = axios.get('http://localhost:4000/booking', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    response.then((res) => {
+      console.log(res.data);
+      setReservation(res.data);
+    });
+    // eslint-disable-next-line no-console
+    response.catch((err) => console.log(err));
+  }, []);
+
   return (
     <Container> <Title>Você já escolheu seu quarto:</Title>
       <StyledHotel>
-        <HotelImg src="https://pix10.agoda.net/hotelImages/124/1246280/1246280_16061017110043391702.jpg?ca=6&ce=1&s=1024x768"/>
-        <HotelName>Driven Resort</HotelName>
+        <HotelImg src={reservation.Hotel.image}/>
+        <HotelName>{reservation.Hotel.name}</HotelName>
         <HotelInfos>Quarto reservado</HotelInfos>
-        <HotelInfos2>101 (Double)</HotelInfos2> 
+        <HotelInfos2>{reservation &&
+    reservation.Room.name}{' '}
+        {reservation &&
+    (reservation.Room.capacity === 1
+      ? '(single)'
+      : reservation.Room.capacity === 2
+        ? '(double)'
+        : '(triple or more)')} </HotelInfos2> 
         <HotelInfos>Pessoas no seu quarto</HotelInfos>
-        <HotelInfos2>Você e mais 1</HotelInfos2>
+        <HotelInfos2>Você {reservation.Room.capacity === 1 ? '':  `e mais ${reservation.Room.capacity}`} </HotelInfos2>
       </StyledHotel>
       <UpdateRoom>TROCAR DE QUARTO</UpdateRoom>
     </Container>
