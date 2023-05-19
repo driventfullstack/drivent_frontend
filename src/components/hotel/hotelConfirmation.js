@@ -22,6 +22,10 @@ export default function HotelandRoomSuccess() {
     response.catch((err) => console.log(err));
   }, []);
 
+  if (!reservation) {
+    return <div>Loading...</div>; // Adicione um indicador de carregamento enquanto espera a resposta
+  }
+
   return (
     <Container> <Title>Você já escolheu seu quarto:</Title>
       <StyledHotel>
