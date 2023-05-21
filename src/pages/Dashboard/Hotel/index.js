@@ -9,6 +9,7 @@ import axios from 'axios';
 import React from 'react';
 import { useState } from 'react';
 import HotelandRoomSuccess from '../../../components/hotel/hotelConfirmation';
+import { toast } from 'react-toastify';
 
 export default function Hotel() {
   const { ticket } = useTicket();
@@ -17,6 +18,7 @@ export default function Hotel() {
   const [hotelSelected, setHotelSelected] = useState({});
   const [roomSelected, setRoomSelected] = useState({});
   const [readyToReserve, setReadyToReserve] = useState(false);
+  const [roomChange, setRoomChange] = useState(false);
   const [reservation, setReservation] = useState(false);
 
   useEffect(() => {
@@ -26,15 +28,13 @@ export default function Hotel() {
       },
     });
     response.then((res) => {
-      // eslint-disable-next-line no-console
-      console.log(res.data);
       setHotels(res.data);
     });
   }, []);
 
   function DisplayRooms(room) {
     return (
-      <button onClick={() => SelectRoom(room)} disabled={room.capacity === room.Booking.length}>
+      <button onClick={() => SelectRoom(room)}  disabled={room.capacity === room.Booking.length} style={{ backgroundColor: roomSelected === true ? '#FFEED2' : '' }}>
         <p>{room.name}</p>
         <p>
           {Array.from({ length: room.capacity }, (_, index) => {
@@ -52,6 +52,10 @@ export default function Hotel() {
 function SelectRoom(room) {
     setRoomSelected(room);
     setReadyToReserve(true);
+}
+
+function handleRoomChange() {
+  setRoomChange(true);
 }
 
 async function ReserveConfirmation() {
@@ -72,6 +76,34 @@ async function ReserveConfirmation() {
   }
 }
 
+async function RebookingConfirmation() {
+  try {
+    const booking = await axios.get(
+      'http://localhost:4000/booking',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const response = await axios.put(
+      `http://localhost:4000/booking/${booking.data.id}`,
+      { roomId: roomSelected.id },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    toast('Reserva atualizada com sucesso!');
+    return response.data;
+  } catch (err) {
+    toast('Deu algum problema para atualizar a reserva: quarto sem vaga!');
+    console.log(err);
+  }
+};
+
   return (
     <>
       <StyledTypography variant="h4">Escolha de quarto e hotel</StyledTypography>
@@ -90,7 +122,7 @@ async function ReserveConfirmation() {
               {hotels.length !== 0
                 ? hotels.map((resp) => {
                     return (
-                      <StyledHotel onClick={() => setHotelSelected(resp)}>
+                      <StyledHotel onClick={() => setHotelSelected(resp)} style={{ backgroundColor: hotelSelected === true ? '#FFEED2' : '' }}>
                         <HotelImg src={resp.image}></HotelImg>
                         <HotelName>{resp.name}</HotelName>
                         <HotelInfos>Tipos de acomodação:</HotelInfos>
@@ -112,12 +144,23 @@ async function ReserveConfirmation() {
                ) : (
                 ''
               )}
-        {readyToReserve !== true ? '' : <ReserveRoom onClick={ReserveConfirmation}>RESERVAR QUARTO</ReserveRoom>  }
-         
+        {readyToReserve !== true ? (''
+              ) : <ReserveRoom onClick={ReserveConfirmation}>RESERVAR QUARTO</ReserveRoom> }
           </HotelDiv>
         </>
       ) : (
-        <HotelandRoomSuccess/>
+          <div>
+            <HotelandRoomSuccess />
+            {roomChange === true ? (
+              <Rooms>
+                <h1>Agora escolha seu novo quarto:</h1>
+                <div>{hotelSelected.Rooms.map((a) => DisplayRooms(a))}</div>
+                <ReserveRoom onClick={RebookingConfirmation}>RESERVAR NOVO QUARTO</ReserveRoom>
+              </Rooms>
+            ) : (
+              <ReserveRoom onClick={handleRoomChange}>TROCAR DE QUARTO</ReserveRoom>
+            )}
+          </div>
       )}
     </>
   );
@@ -213,7 +256,7 @@ const EscolhaHotel = styled.p`
 `;
 
 const ReserveRoom = styled.div`
-width: 182px;
+max-width: 182px;
 min-height: 37px;
 background: #E0E0E0;
 box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
@@ -229,4 +272,7 @@ display: flex;
 justify-content: center;
 align-items: center;
 margin-top: 28px;
+&:hover {
+  cursor: pointer;
+}
 `;
