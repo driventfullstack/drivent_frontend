@@ -43,18 +43,31 @@ export default function Hotel() {
         onClick={() => selectRoom(room)}
         disabled={room.capacity === room.Booking.length}
         style={{
-          backgroundColor: roomSelected === room ? 'lightgrey' : '',
+          backgroundColor: roomSelected === room ? '#FFEED2' : '',
         }}
       >
         <p>{room.name}</p>
         <p>
-          {Array.from({ length: room.capacity }, (_, index) => {
-            const temReserva = index < room.Booking.length;
+          {roomSelected !== room ? (
+            Array.from({ length: room.capacity }, (_, index) => {
+              const temReserva = index < room.Booking.length;
 
-            if (temReserva) return <ion-icon name="person"> </ion-icon>;
+              if (temReserva) return <ion-icon name="person"> </ion-icon>;
 
-            return <ion-icon name="person-outline"> </ion-icon>;
-          })}
+              return <ion-icon name="person-outline"></ion-icon>;
+            })
+          ) : (
+            <>
+              {Array.from({ length: room.capacity - 1 }, (_, index) => {
+                const temReserva = index < room.Booking.length;
+
+                if (temReserva) return <ion-icon name="person"> </ion-icon>;
+
+                return <ion-icon name="person-outline"></ion-icon>;
+              })}
+              <ion-icon style={{ color: '#FF4791' }} name="person"></ion-icon>
+            </>
+          )}
         </p>
       </button>
     );
