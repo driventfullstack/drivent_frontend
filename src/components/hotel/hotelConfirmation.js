@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import styled from 'styled-components';
 import useToken from '../../hooks/useToken';
 import { useState } from 'react';
@@ -15,7 +16,6 @@ export default function HotelandRoomSuccess() {
       },
     });
     response.then((res) => {
-      console.log(res.data);
       setReservation(res.data);
     });
     // eslint-disable-next-line no-console
@@ -27,21 +27,23 @@ export default function HotelandRoomSuccess() {
   }
 
   return (
-    <Container> <Title>Você já escolheu seu quarto:</Title>
+    <Container>
+      <Title>Você já escolheu seu quarto:</Title>
       <StyledHotel>
-        <HotelImg src={reservation.Hotel.image}/>
+        <HotelImg src={reservation.Hotel.image} />
         <HotelName>{reservation.Hotel.name}</HotelName>
         <HotelInfos>Quarto reservado</HotelInfos>
-        <HotelInfos2>{reservation &&
-    reservation.Room.name}{' '}
-        {reservation &&
-    (reservation.Room.capacity === 1
-      ? '(single)'
-      : reservation.Room.capacity === 2
-        ? '(double)'
-        : '(triple or more)')} </HotelInfos2> 
+        <HotelInfos2>
+          {reservation && reservation.Room.name}
+          {reservation &&
+            (reservation.Room.capacity === 1
+              ? '(single)'
+              : reservation.Room.capacity === 2
+              ? '(double)'
+              : '(triple or more)')}
+        </HotelInfos2>
         <HotelInfos>Pessoas no seu quarto</HotelInfos>
-        <HotelInfos2>Você {reservation.Room.capacity === 1 ? '':  `e mais ${reservation.Room.capacity}`} </HotelInfos2>
+        <HotelInfos2>Você {reservation.Room.capacity === 1 ? '' : `e mais ${reservation.Room.capacity}`} </HotelInfos2>
       </StyledHotel>
       <UpdateRoom>TROCAR DE QUARTO</UpdateRoom>
     </Container>
@@ -57,13 +59,13 @@ const Title = styled.p`
 `;
 
 const Container = styled.div`
-height: 100%;
+  height: 100%;
 `;
 
 const StyledHotel = styled.div`
   height: 264px;
   width: 196px;
-  background-color: #FFEED2;
+  background-color: #ffeed2;
   border-radius: 10px;
   margin-right: 18px;
   padding-top: 16px;
@@ -105,20 +107,20 @@ const HotelInfos2 = styled.p`
 `;
 
 const UpdateRoom = styled.div`
-width: 182px;
-height: 37px;
-background: #E0E0E0;
-box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
-border-radius: 4px;
-font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-line-height: 16px;
-text-align: center;
-color: #000000;
-display: flex;
-justify-content: center;
-align-items: center;
-margin-top: 28px;
+  width: 182px;
+  height: 37px;
+  background: #e0e0e0;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: center;
+  color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 28px;
 `;
