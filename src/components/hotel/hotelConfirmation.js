@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import styled from 'styled-components';
 import useToken from '../../hooks/useToken';
 import { useState } from 'react';
@@ -26,21 +27,23 @@ export default function HotelandRoomSuccess() {
   }
 
   return (
-    <Container> <Title>Você já escolheu seu quarto:</Title>
+    <Container>
+      <Title>Você já escolheu seu quarto:</Title>
       <StyledHotel>
-        <HotelImg src={reservation.Hotel.image}/>
+        <HotelImg src={reservation.Hotel.image} />
         <HotelName>{reservation.Hotel.name}</HotelName>
         <HotelInfos>Quarto reservado</HotelInfos>
-        <HotelInfos2>{reservation &&
-    reservation.Room.name}{' '}
-        {reservation &&
-    (reservation.Room.capacity === 1
-      ? '(single)'
-      : reservation.Room.capacity === 2
-        ? '(double)'
-        : '(triple or more)')} </HotelInfos2> 
+        <HotelInfos2>
+          {reservation && reservation.Room.name}
+          {reservation &&
+            (reservation.Room.capacity === 1
+              ? '(single)'
+              : reservation.Room.capacity === 2
+              ? '(double)'
+              : '(triple or more)')}
+        </HotelInfos2>
         <HotelInfos>Pessoas no seu quarto</HotelInfos>
-        <HotelInfos2>Você {reservation.Room.capacity === 1 ? '':  `e mais ${reservation.Room.capacity}`} </HotelInfos2>
+        <HotelInfos2>Você {reservation.Room.capacity === 1 ? '' : `e mais ${reservation.Room.capacity}`} </HotelInfos2>
       </StyledHotel>
     </Container>
   );
@@ -55,13 +58,13 @@ const Title = styled.p`
 `;
 
 const Container = styled.div`
-height: 100%;
+  height: 100%;
 `;
 
 const StyledHotel = styled.div`
   height: 264px;
   width: 196px;
-  background-color: #FFEED2;
+  background-color: #ffeed2;
   border-radius: 10px;
   margin-right: 18px;
   padding-top: 16px;

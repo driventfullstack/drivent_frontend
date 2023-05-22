@@ -33,17 +33,41 @@ export default function Hotel() {
   }, []);
 
   function DisplayRooms(room) {
+    const selectRoom = (room) => {
+      setRoomSelected(room);
+      setReadyToReserve(true);
+    };
+
     return (
-      <button onClick={() => SelectRoom(room)}  disabled={room.capacity === room.Booking.length} style={{ backgroundColor: roomSelected === true ? '#FFEED2' : '' }}>
+      <button
+        onClick={() => selectRoom(room)}
+        disabled={room.capacity === room.Booking.length}
+        style={{
+          backgroundColor: roomSelected === room ? '#FFEED2' : '',
+        }}
+      >
         <p>{room.name}</p>
         <p>
-          {Array.from({ length: room.capacity }, (_, index) => {
-            const temReserva = index < room.Booking.length;
+          {roomSelected !== room ? (
+            Array.from({ length: room.capacity }, (_, index) => {
+              const temReserva = index < room.Booking.length;
 
-            if (temReserva) return <ion-icon name="person"> </ion-icon>;
+              if (temReserva) return <ion-icon name="person"> </ion-icon>;
 
-            return <ion-icon name="person-outline"> </ion-icon>;
-          })}
+              return <ion-icon name="person-outline"></ion-icon>;
+            })
+          ) : (
+            <>
+              {Array.from({ length: room.capacity - 1 }, (_, index) => {
+                const temReserva = index < room.Booking.length;
+
+                if (temReserva) return <ion-icon name="person"> </ion-icon>;
+
+                return <ion-icon name="person-outline"></ion-icon>;
+              })}
+              <ion-icon style={{ color: '#FF4791' }} name="person"></ion-icon>
+            </>
+          )}
         </p>
       </button>
     );
@@ -74,7 +98,6 @@ async function ReserveConfirmation() {
   } catch (error) {
     throw error;
   }
-}
 
 async function RebookingConfirmation() {
   try {
@@ -114,7 +137,7 @@ async function RebookingConfirmation() {
         <ValidationCard
           text={'Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades'}
         />
-      ) : reservation !== true ? ( 
+      ) : reservation !== true ? (
         <>
           <EscolhaHotel>Primeiro, escolha seu hotel</EscolhaHotel>
           <HotelDiv>
@@ -192,6 +215,12 @@ const Rooms = styled.div`
     flex-wrap: wrap;
     gap: 10px;
     button {
+      cursor: pointer;
+      :hover {
+        background-color: lightgray;
+      }
+    }
+    button {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -256,23 +285,26 @@ const EscolhaHotel = styled.p`
 `;
 
 const ReserveRoom = styled.div`
-max-width: 182px;
-min-height: 37px;
-background: #E0E0E0;
-box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
-border-radius: 4px;
-font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-line-height: 16px;
-text-align: center;
-color: #000000;
-display: flex;
-justify-content: center;
-align-items: center;
-margin-top: 28px;
-&:hover {
-  cursor: pointer;
-}
+  width: 182px;
+  min-height: 37px;
+  background: #e0e0e0;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: center;
+  color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 28px;
+
+  :hover {
+    cursor: pointer;
+    background-color: green;
+    color: white;
+  }
 `;
