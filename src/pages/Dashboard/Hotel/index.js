@@ -33,8 +33,19 @@ export default function Hotel() {
   }, []);
 
   function DisplayRooms(room) {
+    const selectRoom = (room) => {
+      setRoomSelected(room);
+      setReadyToReserve(true);
+    };
+
     return (
-      <button onClick={() => SelectRoom(room)} disabled={room.capacity === room.Booking.length}>
+      <button
+        onClick={() => selectRoom(room)}
+        disabled={room.capacity === room.Booking.length}
+        style={{
+          backgroundColor: roomSelected === room ? 'lightgrey' : '',
+        }}
+      >
         <p>{room.name}</p>
         <p>
           {Array.from({ length: room.capacity }, (_, index) => {
@@ -47,11 +58,6 @@ export default function Hotel() {
         </p>
       </button>
     );
-  }
-
-  function SelectRoom(room) {
-    setRoomSelected(room);
-    setReadyToReserve(true);
   }
 
   async function ReserveConfirmation() {
