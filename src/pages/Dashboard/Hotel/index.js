@@ -49,28 +49,28 @@ export default function Hotel() {
     );
   }
 
-function SelectRoom(room) {
+  function SelectRoom(room) {
     setRoomSelected(room);
     setReadyToReserve(true);
-}
-
-async function ReserveConfirmation() {
-  setReservation(true);
-  try {
-    const response = await axios.post(
-      'http://localhost:4000/booking',
-      { roomId: roomSelected.id },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
   }
-}
+
+  async function ReserveConfirmation() {
+    setReservation(true);
+    try {
+      const response = await axios.post(
+        'http://localhost:4000/booking',
+        { roomId: roomSelected.id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   return (
     <>
@@ -82,7 +82,7 @@ async function ReserveConfirmation() {
         <ValidationCard
           text={'Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades'}
         />
-      ) : reservation !== true ? ( 
+      ) : reservation !== true ? (
         <>
           <EscolhaHotel>Primeiro, escolha seu hotel</EscolhaHotel>
           <HotelDiv>
@@ -109,15 +109,14 @@ async function ReserveConfirmation() {
 
                 <div>{hotelSelected.Rooms.map((a) => DisplayRooms(a))}</div>
               </Rooms>
-               ) : (
-                ''
-              )}
-        {readyToReserve !== true ? '' : <ReserveRoom onClick={ReserveConfirmation}>RESERVAR QUARTO</ReserveRoom>  }
-         
+            ) : (
+              ''
+            )}
+            {readyToReserve !== true ? '' : <ReserveRoom onClick={ReserveConfirmation}>RESERVAR QUARTO</ReserveRoom>}
           </HotelDiv>
         </>
       ) : (
-        <HotelandRoomSuccess/>
+        <HotelandRoomSuccess />
       )}
     </>
   );
@@ -148,6 +147,12 @@ const Rooms = styled.div`
     width: 807px;
     flex-wrap: wrap;
     gap: 10px;
+    button {
+      cursor: pointer;
+      :hover {
+        background-color: lightgray;
+      }
+    }
     button {
       display: flex;
       justify-content: space-between;
@@ -213,20 +218,26 @@ const EscolhaHotel = styled.p`
 `;
 
 const ReserveRoom = styled.div`
-width: 182px;
-min-height: 37px;
-background: #E0E0E0;
-box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
-border-radius: 4px;
-font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-line-height: 16px;
-text-align: center;
-color: #000000;
-display: flex;
-justify-content: center;
-align-items: center;
-margin-top: 28px;
+  width: 182px;
+  min-height: 37px;
+  background: #e0e0e0;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: center;
+  color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 28px;
+
+  :hover {
+    cursor: pointer;
+    background-color: green;
+    color: white;
+  }
 `;
