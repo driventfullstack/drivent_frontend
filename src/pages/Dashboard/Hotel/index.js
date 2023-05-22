@@ -9,6 +9,7 @@ import axios from 'axios';
 import React from 'react';
 import { useState } from 'react';
 import HotelandRoomSuccess from '../../../components/hotel/hotelConfirmation';
+import { toast } from 'react-toastify';
 
 export default function Hotel() {
   const { ticket } = useTicket();
@@ -17,6 +18,7 @@ export default function Hotel() {
   const [hotelSelected, setHotelSelected] = useState({});
   const [roomSelected, setRoomSelected] = useState({});
   const [readyToReserve, setReadyToReserve] = useState(false);
+  const [roomChange, setRoomChange] = useState(false);
   const [reservation, setReservation] = useState(false);
 
   useEffect(() => {
@@ -26,8 +28,6 @@ export default function Hotel() {
       },
     });
     response.then((res) => {
-      // eslint-disable-next-line no-console
-      console.log(res.data);
       setHotels(res.data);
     });
   }, []);
@@ -73,23 +73,59 @@ export default function Hotel() {
     );
   }
 
-  async function ReserveConfirmation() {
-    setReservation(true);
-    try {
-      const response = await axios.post(
-        'http://localhost:4000/booking',
-        { roomId: roomSelected.id },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+function SelectRoom(room) {
+    setRoomSelected(room);
+    setReadyToReserve(true);
+}
+
+function handleRoomChange() {
+  setRoomChange(true);
+}
+
+async function ReserveConfirmation() {
+  setReservation(true);
+  try {
+    const response = await axios.post(
+      'http://localhost:4000/booking',
+      { roomId: roomSelected.id },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
   }
+
+async function RebookingConfirmation() {
+  try {
+    const booking = await axios.get(
+      'http://localhost:4000/booking',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const response = await axios.put(
+      `http://localhost:4000/booking/${booking.data.id}`,
+      { roomId: roomSelected.id },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    toast('Reserva atualizada com sucesso!');
+    return response.data;
+  } catch (err) {
+    toast('Deu algum problema para atualizar a reserva: quarto sem vaga!');
+    console.log(err);
+  }
+};
 
   return (
     <>
@@ -109,7 +145,7 @@ export default function Hotel() {
               {hotels.length !== 0
                 ? hotels.map((resp) => {
                     return (
-                      <StyledHotel onClick={() => setHotelSelected(resp)}>
+                      <StyledHotel onClick={() => setHotelSelected(resp)} style={{ backgroundColor: hotelSelected === true ? '#FFEED2' : '' }}>
                         <HotelImg src={resp.image}></HotelImg>
                         <HotelName>{resp.name}</HotelName>
                         <HotelInfos>Tipos de acomodação:</HotelInfos>
@@ -128,14 +164,26 @@ export default function Hotel() {
 
                 <div>{hotelSelected.Rooms.map((a) => DisplayRooms(a))}</div>
               </Rooms>
-            ) : (
-              ''
-            )}
-            {readyToReserve !== true ? '' : <ReserveRoom onClick={ReserveConfirmation}>RESERVAR QUARTO</ReserveRoom>}
+               ) : (
+                ''
+              )}
+        {readyToReserve !== true ? (''
+              ) : <ReserveRoom onClick={ReserveConfirmation}>RESERVAR QUARTO</ReserveRoom> }
           </HotelDiv>
         </>
       ) : (
-        <HotelandRoomSuccess />
+          <div>
+            <HotelandRoomSuccess />
+            {roomChange === true ? (
+              <Rooms>
+                <h1>Agora escolha seu novo quarto:</h1>
+                <div>{hotelSelected.Rooms.map((a) => DisplayRooms(a))}</div>
+                <ReserveRoom onClick={RebookingConfirmation}>RESERVAR NOVO QUARTO</ReserveRoom>
+              </Rooms>
+            ) : (
+              <ReserveRoom onClick={handleRoomChange}>TROCAR DE QUARTO</ReserveRoom>
+            )}
+          </div>
       )}
     </>
   );

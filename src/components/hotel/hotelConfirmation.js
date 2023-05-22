@@ -45,7 +45,6 @@ export default function HotelandRoomSuccess() {
         <HotelInfos>Pessoas no seu quarto</HotelInfos>
         <HotelInfos2>Você {reservation.Room.capacity === 1 ? '' : `e mais ${reservation.Room.capacity}`} </HotelInfos2>
       </StyledHotel>
-      <UpdateRoom>TROCAR DE QUARTO</UpdateRoom>
     </Container>
   );
 }
@@ -106,21 +105,3 @@ const HotelInfos2 = styled.p`
   margin-top: 2px;
 `;
 
-const UpdateRoom = styled.div`
-  width: 182px;
-  height: 37px;
-  background: #e0e0e0;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
-  border-radius: 4px;
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 16px;
-  text-align: center;
-  color: #000000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 28px;
-`;
