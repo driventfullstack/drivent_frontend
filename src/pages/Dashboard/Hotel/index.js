@@ -98,6 +98,7 @@ async function ReserveConfirmation() {
   } catch (error) {
     throw error;
   }
+}
 
 async function RebookingConfirmation() {
   try {

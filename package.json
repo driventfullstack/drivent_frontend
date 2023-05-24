@@ -10,7 +10,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
-    "date-fns": "^2.23.0",
+    "date-fns": "^2.30.0",
     "dayjs": "^1.10.6",
     "dotenv": "^16.0.3",
     "file-saver": "^2.0.5",
@@ -139,4 +139,3 @@
     "vite": "^4.3.5"
   }
 }
-
