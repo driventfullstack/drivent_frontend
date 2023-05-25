@@ -76,7 +76,6 @@ export default function Hotel() {
   function handleRoomChange() {
     setRoomChange(true);
   }
-}
 
   async function RebookingConfirmation() {
     try {
@@ -164,7 +163,11 @@ export default function Hotel() {
               ''
             )}
 
-            <ReserveRoom onClick={() => confirmReservation()}>RESERVAR QUARTO</ReserveRoom>
+            {readyToReserve === true ? (
+              <ReserveRoom onClick={() => confirmReservation()}>RESERVAR QUARTO</ReserveRoom>
+            ) : (
+              ''
+            )}
           </HotelDiv>
         </>
       ) : (
