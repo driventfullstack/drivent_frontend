@@ -22,6 +22,15 @@ export default function Hotel() {
   const [reservation, setReservation] = useState(false);
 
   useEffect(() => {
+    const response = axios.get('http://localhost:4000/booking', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    response.then((res) => setReservation(true));
+  }, []);
+
+  useEffect(() => {
     const response = axios.get('http://localhost:4000/hotels', {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -103,7 +112,6 @@ export default function Hotel() {
   }
 
   async function confirmReservation() {
-    setReservation(true);
     try {
       await axios.post(
         'http://localhost:4000/booking',
@@ -114,6 +122,7 @@ export default function Hotel() {
           },
         }
       );
+      setReservation(true);
     } catch (error) {
       toast('Erro ao reservar quarto');
     }
@@ -135,9 +144,10 @@ export default function Hotel() {
           <HotelDiv>
             <Hotels>
               {hotels.length !== 0
-                ? hotels.map((resp) => {
+                ? hotels.map((resp, i) => {
                     return (
                       <StyledHotel
+                        key={1 + i}
                         onClick={() => setHotelSelected(resp)}
                         style={{ backgroundColor: hotelSelected === true ? '#FFEED2' : '' }}
                       >
