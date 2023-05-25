@@ -76,6 +76,7 @@ export default function Hotel() {
   function handleRoomChange() {
     setRoomChange(true);
   }
+}
 
   async function RebookingConfirmation() {
     try {

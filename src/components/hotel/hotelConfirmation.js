@@ -43,7 +43,7 @@ export default function HotelandRoomSuccess() {
               : '(triple or more)')}
         </HotelInfos2>
         <HotelInfos>Pessoas no seu quarto</HotelInfos>
-        <HotelInfos2>Você {reservation.Room.capacity === 1 ? '' : `e mais ${reservation.Room.capacity}`} </HotelInfos2>
+        <HotelInfos2>Você {reservation.Room.capacity === 1 ? '' : `e mais ${reservation.Room.capacity-1}`} </HotelInfos2>
       </StyledHotel>
     </Container>
   );
