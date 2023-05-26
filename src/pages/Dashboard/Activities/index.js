@@ -8,25 +8,49 @@ export default function Activities() {
   const token = useToken();
 
   useEffect(() => {
-    const response = axios.get('http://localhost:4000/activities', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    response.then((res) => {
-      setActivities(res.data);
-      console.log(res.data);
-    });
+    const fetchActivities = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/activities', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const activitiesData = response.data;
+
+        const groupedActivities = activitiesData.reduce((grouped, activity) => {
+          const activityDate = new Date(activity.startAt).toLocaleDateString('pt-BR', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'numeric',
+          }).replace('-feira', '');
+
+          if (!grouped[activityDate]) {
+            grouped[activityDate] = [];
+          }
+          grouped[activityDate].push(activity);
+          return grouped;
+        }, {});
+
+        const filteredActivities = Object.values(groupedActivities);
+
+        setActivities(filteredActivities);
+        console.log(filteredActivities);
+      } catch (error) {
+        console.error('Error fetching activities:', error);
+      }
+    };
+
+    fetchActivities();
   }, []);
 
   return (
     <Container>
       <h1>Escolha de atividades</h1>
-      <h2>Primeiro, filtre pelo dia do evento: </h2>
+      <h2>Primeiro, filtre pelo dia do evento:</h2>
       <EventsContainer>
-        {activities.map((activity) => (
-          <EventDay key={activity.id}>
-            {new Date(activity.startAt).toLocaleDateString('pt-BR', {
+        {activities.map((dayActivities, index) => (
+          <EventDay key={index}>
+            {new Date(dayActivities[0].startAt).toLocaleDateString('pt-BR', {
               weekday: 'long',
               day: 'numeric',
               month: 'numeric',
