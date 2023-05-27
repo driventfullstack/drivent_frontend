@@ -60,11 +60,33 @@ export default function Activities() {
       <Att>
         {eventSelected.length !== 0
           ? eventSelected.map((a) => (
-              <div>
+              <ActBox>
                 <h1>{a.Auditory.name}</h1>
-                <p>{a.name}</p>
-                <p>{a.capacity}</p>
-              </div>
+                <InnerActBox>
+                  <div>
+                    <p>
+                      <strong>{a.name}</strong>
+                      <p>
+                        {dayjs(a.startAt).format('HH:mm')} - {dayjs(a.endAt).format('HH:mm')}
+                      </p>
+                    </p>
+                    <section>
+                      <hr></hr>
+                      {a.capacity - a.Inscription.length !== 0 ? (
+                        <p style={{ color: 'green' }}>
+                          <ion-icon name="log-in-outline"></ion-icon>
+                          <span>{a.capacity - a.Inscription.length} vagas</span>
+                        </p>
+                      ) : (
+                        <p style={{ color: 'red' }}>
+                          <ion-icon name="close-circle-outline"></ion-icon>
+                          <span>Esgotado</span>
+                        </p>
+                      )}
+                    </section>
+                  </div>
+                </InnerActBox>
+              </ActBox>
             ))
           : ''}
       </Att>
@@ -105,14 +127,70 @@ const EventDay = styled.div`
 const Att = styled.div`
   display: flex;
 
-  div {
-    background-color: red;
-    width: 288px;
-    height: 255px;
-    border: solid 1px grey;
-    box-sizing: border-box;
-    padding: 10px;
+  h1 {
+    font-size: 17px;
+    color: #7b7b7b;
+    text-align: center;
   }
+
   margin: auto;
   margin-top: 20px;
+`;
+
+const ActBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 288px;
+  height: 255px;
+`;
+
+const InnerActBox = styled.div`
+  border: 1px solid #d7d7d7;
+  height: 100%;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  padding: 10px;
+
+  div {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 5px;
+    background: #f1f1f1;
+    font-size: 14px;
+    color: #343434;
+    box-sizing: border-box;
+    padding: 10px;
+
+    p {
+      width: 180px;
+    }
+  }
+
+  section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    width: 50px;
+    hr {
+      height: 60px;
+      width: 1px;
+      background-color: #cfcfcf;
+      border: none;
+    }
+
+    p {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 9px;
+      ion-icon {
+        font-size: 24px;
+      }
+    }
+  }
 `;
