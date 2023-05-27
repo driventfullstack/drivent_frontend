@@ -63,7 +63,7 @@ export default function Activities() {
               <ActBox>
                 <h1>{a.Auditory.name}</h1>
                 <InnerActBox>
-                  <div>
+                  <div style={{ height: `${(dayjs(a.endAt).hour() - dayjs(a.startAt).hour()) * 80}px` }}>
                     <p>
                       <strong>{a.name}</strong>
                       <p>
@@ -141,7 +141,6 @@ const ActBox = styled.div`
   display: flex;
   flex-direction: column;
   width: 288px;
-  height: 255px;
 `;
 
 const InnerActBox = styled.div`
