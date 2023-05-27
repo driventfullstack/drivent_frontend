@@ -1,10 +1,14 @@
+/* eslint-disable indent */
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useToken from '../../../hooks/useToken';
+import dayjs from 'dayjs';
 
 export default function Activities() {
   const [activities, setActivities] = useState([]);
+  const [eventSelected, setEvent] = useState([]);
+  const [day, setDay] = useState([]);
   const token = useToken();
 
   useEffect(() => {
@@ -15,9 +19,21 @@ export default function Activities() {
     });
     response.then((res) => {
       setActivities(res.data);
-      console.log(res.data);
     });
   }, []);
+
+  function getDaySelected(date) {
+    const dateFormat = dayjs(date.startAt).format('YYYY-MM-DD');
+    const response = axios.get(`http://localhost:4000/activities/${dateFormat}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    response.then((res) => {
+      setDay(date);
+      setEvent(res.data);
+    });
+  }
 
   return (
     <Container>
@@ -25,15 +41,33 @@ export default function Activities() {
       <h2>Primeiro, filtre pelo dia do evento: </h2>
       <EventsContainer>
         {activities.map((activity) => (
-          <EventDay key={activity.id}>
-            {new Date(activity.startAt).toLocaleDateString('pt-BR', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'numeric',
-            }).replace('-feira', '')}
+          <EventDay
+            onClick={() => getDaySelected(activity)}
+            style={day === activity ? { backgroundColor: '#FFD37D' } : {}}
+            key={activity.id}
+          >
+            {new Date(activity.startAt)
+              .toLocaleDateString('pt-BR', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'numeric',
+              })
+              .replace('-feira', '')}
           </EventDay>
         ))}
       </EventsContainer>
+
+      <Att>
+        {eventSelected.length !== 0
+          ? eventSelected.map((a) => (
+              <div>
+                <h1>{a.Auditory.name}</h1>
+                <p>{a.name}</p>
+                <p>{a.capacity}</p>
+              </div>
+            ))
+          : ''}
+      </Att>
     </Container>
   );
 }
@@ -55,14 +89,30 @@ const EventsContainer = styled.div`
 `;
 
 const EventDay = styled.div`
-width: 131px;
-height: 37px;
-background: #E0E0E0;
-box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
-border-radius: 4px;
-margin-right: 17px;
-text-align:center;
-display: flex;
-align-items: center;
-justify-content: center;
+  width: 131px;
+  height: 37px;
+  background: #e0e0e0;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  margin-right: 17px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+`;
+
+const Att = styled.div`
+  display: flex;
+
+  div {
+    background-color: red;
+    width: 288px;
+    height: 255px;
+    border: solid 1px grey;
+    box-sizing: border-box;
+    padding: 10px;
+  }
+  margin: auto;
+  margin-top: 20px;
 `;

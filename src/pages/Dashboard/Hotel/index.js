@@ -107,7 +107,6 @@ export default function Hotel() {
       return response.data;
     } catch (err) {
       toast('Deu algum problema para atualizar a reserva: quarto sem vaga!');
-      console.log(err);
     }
   }
 
