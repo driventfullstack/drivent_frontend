@@ -1,3 +1,4 @@
+/* eslint-disable space-before-function-paren */
 /* eslint-disable indent */
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -12,14 +13,40 @@ export default function Activities() {
   const token = useToken();
 
   useEffect(() => {
-    const response = axios.get('http://localhost:4000/activities', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    response.then((res) => {
-      setActivities(res.data);
-    });
+    const fetchActivities = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/activities', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const activitiesData = response.data;
+
+        const groupedActivities = activitiesData.reduce((grouped, activity) => {
+          const activityDate = new Date(activity.startAt)
+            .toLocaleDateString('pt-BR', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'numeric',
+            })
+            .replace('-feira', '');
+
+          if (!grouped[activityDate]) {
+            grouped[activityDate] = [];
+          }
+          grouped[activityDate].push(activity);
+          return grouped;
+        }, {});
+
+        const filteredActivities = Object.values(groupedActivities);
+
+        setActivities(filteredActivities);
+      } catch (error) {
+        console.error('Error fetching activities:', error);
+      }
+    };
+
+    fetchActivities();
   }, []);
 
   function getDaySelected(date) {
@@ -30,23 +57,23 @@ export default function Activities() {
       },
     });
     response.then((res) => {
-      setDay(date);
       setEvent(res.data);
+      setDay(date);
     });
   }
 
   return (
     <Container>
       <h1>Escolha de atividades</h1>
-      <h2>Primeiro, filtre pelo dia do evento: </h2>
+      <h2>Primeiro, filtre pelo dia do evento:</h2>
       <EventsContainer>
-        {activities.map((activity) => (
+        {activities.map((dayActivities, index) => (
           <EventDay
-            onClick={() => getDaySelected(activity)}
-            style={day === activity ? { backgroundColor: '#FFD37D' } : {}}
-            key={activity.id}
+            onClick={() => getDaySelected(dayActivities[0])}
+            key={index}
+            style={day === dayActivities[0] ? { backgroundColor: '#FFD37D' } : {}}
           >
-            {new Date(activity.startAt)
+            {new Date(dayActivities[0].startAt)
               .toLocaleDateString('pt-BR', {
                 weekday: 'long',
                 day: 'numeric',
@@ -60,7 +87,7 @@ export default function Activities() {
       <Att>
         {eventSelected.length !== 0
           ? eventSelected.map((a) => (
-              <ActBox>
+              <ActBox key={a.id}>
                 <h1>{a.Auditory.name}</h1>
                 <InnerActBox>
                   <div style={{ height: `${(dayjs(a.endAt).hour() - dayjs(a.startAt).hour()) * 80}px` }}>
