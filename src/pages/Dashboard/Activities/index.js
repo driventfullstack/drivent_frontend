@@ -5,12 +5,15 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useToken from '../../../hooks/useToken';
 import dayjs from 'dayjs';
+import { useTicket } from '../../../hooks/api/useTickets';
+import { ValidationCard } from '../../../components/ValidationCard';
 
 export default function Activities() {
   const [activities, setActivities] = useState([]);
   const [eventSelected, setEvent] = useState([]);
   const [day, setDay] = useState([]);
   const token = useToken();
+  const { ticket } = useTicket();
 
   useEffect(() => {
     const fetchActivities = async () => {
