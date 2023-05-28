@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useToken from '../../../hooks/useToken';
 import dayjs from 'dayjs';
+import { useTicket } from '../../../hooks/api/useTickets';
+import { ValidationCard } from '../../../components/ValidationCard';
 
 export default function Activities() {
   const [activities, setActivities] = useState([]);
   const [eventSelected, setEvent] = useState([]);
   const [day, setDay] = useState([]);
   const token = useToken();
+  const { ticket } = useTicket();
 
   useEffect(() => {
     const response = axios.get('http://localhost:4000/activities', {
@@ -39,7 +42,14 @@ export default function Activities() {
     <Container>
       <h1>Escolha de atividades</h1>
       <h2>Primeiro, filtre pelo dia do evento: </h2>
-      <EventsContainer>
+      
+      {ticket?.status !== 'PAID' ? (
+        <ValidationCard text={'Você precisa ter confirmado pagamento antes de fazer a escolha de atividades'} />
+      ) : ticket.TicketType?.isRemote? (
+        <ValidationCard
+          text={'Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.'}
+        />
+      ) : <><EventsContainer>
         {activities.map((activity) => (
           <EventDay
             onClick={() => getDaySelected(activity)}
@@ -89,7 +99,7 @@ export default function Activities() {
               </ActBox>
             ))
           : ''}
-      </Att>
+      </Att></>}
     </Container>
   );
 }
