@@ -6,14 +6,42 @@ import styled from 'styled-components';
 import useToken from '../../../hooks/useToken';
 import dayjs from 'dayjs';
 import { useTicket } from '../../../hooks/api/useTickets';
-import { ValidationCard } from '../../../components/ValidationCard';
+import { toast } from 'react-toastify';
 
 export default function Activities() {
   const [activities, setActivities] = useState([]);
   const [eventSelected, setEvent] = useState([]);
-  const [day, setDay] = useState([]);
+  const [day, setDay] = useState(null);
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [bookedActivity, setBookedActivity] = useState(false);
+  const [activityStatus, setActivityStatus] = useState({});
+  const [userActivities, setUserActivities] = useState({});
+
   const token = useToken();
-  const { ticket } = useTicket();
+
+  useEffect(() => {
+    async function getUserActivities() {
+      try {
+        const response = await axios.get('http://localhost:4000/activities/user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const userActivitiesData = response.data;
+    
+        const status = userActivitiesData.reduce((status, activity) => {
+          status[activity.id] = true;
+          return status;
+        }, {});
+        setActivityStatus(status);
+    
+        setUserActivities(userActivitiesData);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getUserActivities();
+  }, [token]);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -62,8 +90,43 @@ export default function Activities() {
     response.then((res) => {
       setEvent(res.data);
       setDay(date);
+      setSelectedActivity(null);
     });
   }
+
+  async function activityReservation() {
+    try {
+      await axios.post(
+        'http://localhost:4000/activities',
+        { activityId: selectedActivity.id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setActivityStatus((prevStatus) => ({
+        ...prevStatus,
+        [selectedActivity.id]: true,
+      }));
+
+      toast('Atividade selecionada com sucesso');
+      setBookedActivity(true);
+    } catch (err) {
+      toast('Não foi possível reservar atividade!');
+    }
+  }
+
+  function handleActivityChoose(activity) {
+    setSelectedActivity(activity);
+  }
+
+  useEffect(() => {
+    if (selectedActivity && selectedActivity.id) {
+      activityReservation();
+    }
+  }, [selectedActivity]);
 
   return (
     <Container>
@@ -88,37 +151,52 @@ export default function Activities() {
       </EventsContainer>
 
       <Att>
-        {eventSelected.length !== 0
-          ? eventSelected.map((a) => (
-              <ActBox key={a.id}>
-                <h1>{a.Auditory.name}</h1>
-                <InnerActBox>
-                  <div style={{ height: `${(dayjs(a.endAt).hour() - dayjs(a.startAt).hour()) * 80}px` }}>
-                    <p>
-                      <strong>{a.name}</strong>
-                      <p>
-                        {dayjs(a.startAt).format('HH:mm')} - {dayjs(a.endAt).format('HH:mm')}
-                      </p>
-                    </p>
-                    <section>
-                      <hr></hr>
-                      {a.capacity - a.Inscription.length !== 0 ? (
-                        <p style={{ color: 'green' }}>
-                          <ion-icon name="log-in-outline"></ion-icon>
-                          <span>{a.capacity - a.Inscription.length} vagas</span>
-                        </p>
-                      ) : (
-                        <p style={{ color: 'red' }}>
-                          <ion-icon name="close-circle-outline"></ion-icon>
-                          <span>Esgotado</span>
-                        </p>
-                      )}
-                    </section>
-                  </div>
-                </InnerActBox>
-              </ActBox>
-            ))
-          : ''}
+      {eventSelected.length !== 0 ? (
+    eventSelected.map((a) => (
+      <ActBox key={a.id}>
+        <h1>{a.Auditory.name}</h1>
+        <InnerActBox>
+          <div
+            style={{
+              height: `${(dayjs(a.endAt).hour() - dayjs(a.startAt).hour()) * 80}px`,
+              backgroundColor: activityStatus[a.id] ? '#D0FFDB' : '',
+            }}
+            onClick={() => handleActivityChoose(a)}
+          >
+            <p>
+              <strong>{a.name}</strong>
+              <p>
+                {dayjs(a.startAt).format('HH:mm')} - {dayjs(a.endAt).format('HH:mm')}
+              </p>
+            </p>
+            <section>
+              <hr></hr>
+              {activityStatus[a.id] ? (
+                <p style={{ color: 'green' }}>
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  <span>Inscrito!</span>
+                </p>
+              ) : (
+                a.capacity - a.Inscription.length !== 0 ? (
+                  <p style={{ color: 'green' }}>
+                    <ion-icon name="log-in-outline"></ion-icon>
+                    <span>{a.capacity - a.Inscription.length} vagas</span>
+                  </p>
+                ) : (
+                  <p style={{ color: 'red' }}>
+                    <ion-icon name="close-circle-outline"></ion-icon>
+                    <span>Esgotado</span>
+                  </p>
+                )
+              )}
+            </section>
+          </div>
+        </InnerActBox>
+      </ActBox>
+    ))
+  ) : (
+    ''
+  )}
       </Att>
     </Container>
   );
